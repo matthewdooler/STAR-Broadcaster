@@ -1,4 +1,4 @@
-STAR-Broadcaster
+STAR Broadcaster
 ================
 
 STAR radio playout software
