@@ -16,6 +16,7 @@ public class ChannelWidget {
 	private JButton playButton;
 	private JButton pauseButton;
 	private JButton ejectButton;
+	private JButton backButton;
 	
 	/**
 	 * Create a new channel widget, adding its components to the initialised panel
@@ -51,6 +52,8 @@ public class ChannelWidget {
 		controls.add(pauseButton, hConstraints);
 		ejectButton = new JButton("Eject");
 		controls.add(ejectButton, hConstraints);
+		backButton = new JButton("Back");
+		controls.add(backButton, hConstraints);
 		channelPanel.add(controls, vConstraints);
 	}
 
