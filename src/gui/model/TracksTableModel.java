@@ -26,7 +26,8 @@ public class TracksTableModel extends AbstractTableModel {
 	
 	public void addTrack(Track track) {
 		tracks.add(track);
-		fireTableDataChanged();
+		int idx = tracks.size()-1;
+		fireTableRowsInserted(idx, idx);
 	}
 	
 	public int getColumnCount() {

@@ -9,6 +9,7 @@ import javax.swing.table.*;
 
 import model.Track;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class BaseWindow {
 	public BaseWindow() {
 		
 		// Initialise window and maximise it
+		if(isMacOSX()) System.setProperty("com.apple.mrj.application.apple.menu.about.name", WINDOW_TITLE);
 		frame = new JFrame(WINDOW_TITLE);
 		frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 		
@@ -46,15 +48,18 @@ public class BaseWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
+		
 		try {
-			Thread.sleep(500);
-			tracksTableModel.addTrack(new Track("Bullet", "The View", new Date(), "Cheeky for a Reason"));
-			Thread.sleep(1200);
-			tracksTableModel.addTrack(new Track("Bubblewrap", "McFly", new Date(), "Room on the 3rd Floor"));
-			Thread.sleep(1500);
-			tracksTableModel.addTrack(new Track("Avicii", "Long Road to Hell", new Date(), "True"));
-			Thread.sleep(2000);
-			tracksTableModel.addTrack(new Track("Always", "Blink 182", new Date(), "Greatest Hits"));
+			for(int i = 0; i < 3; i++) {
+				Thread.sleep(300);
+				tracksTableModel.addTrack(new Track("Bullet " + i, "The View", new Date(), "Cheeky for a Reason"));
+				Thread.sleep(700);
+				tracksTableModel.addTrack(new Track("Bubblewrap " + i, "McFly", new Date(), "Room on the 3rd Floor"));
+				Thread.sleep(1000);
+				tracksTableModel.addTrack(new Track("Long Road to Hell " + i, "Avicii", new Date(), "True"));
+				Thread.sleep(2000);
+				tracksTableModel.addTrack(new Track("Always " + i, "Blink 182", new Date(), "Greatest Hits"));
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -121,4 +126,8 @@ public class BaseWindow {
 		channelWidgets.add(channelWidget);
 		container.add(channelPanel);
 	}
+	
+    private static boolean isMacOSX() {
+        return System.getProperty("os.name").indexOf("Mac OS X") >= 0;
+    }
 }
