@@ -1,9 +1,15 @@
 package gui;
 
+import gui.model.TracksTableModel;
+
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.table.*;
 
+import model.Track;
+
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -16,6 +22,7 @@ public class BaseWindow {
 	private JFrame frame;
 	private int numChannels = 4;
 	private List<ChannelWidget> channelWidgets = new ArrayList<ChannelWidget>();
+	private TracksTableModel tracksTableModel;
 	
 	/**
 	 * Setup the window and display it
@@ -38,6 +45,19 @@ public class BaseWindow {
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		
+		try {
+			Thread.sleep(500);
+			tracksTableModel.addTrack(new Track("Bullet", "The View", new Date(), "Cheeky for a Reason"));
+			Thread.sleep(1200);
+			tracksTableModel.addTrack(new Track("Bubblewrap", "McFly", new Date(), "Room on the 3rd Floor"));
+			Thread.sleep(1500);
+			tracksTableModel.addTrack(new Track("Avicii", "Long Road to Hell", new Date(), "True"));
+			Thread.sleep(2000);
+			tracksTableModel.addTrack(new Track("Always", "Blink 182", new Date(), "Greatest Hits"));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -56,8 +76,20 @@ public class BaseWindow {
 	}
 	
 	private void setupBrowser(Container container) {
-		// TODO
-		container.add(new JLabel("Browser"), BorderLayout.NORTH);
+		
+		JPanel browser = new JPanel();
+		container.add(browser, BorderLayout.NORTH);
+		
+		tracksTableModel = new TracksTableModel();
+	    JTable table = new JTable(tracksTableModel);
+	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
+		//table.setLayoutOrientation(JList.VERTICAL);
+		//table.setVisibleRowCount(-1);
+		
+		JScrollPane listScroller = new JScrollPane(table);
+		//listScroller.setPreferredSize(new Dimension(250, 80));
+		browser.add(listScroller);
+		
 	}
 	
 	/**
