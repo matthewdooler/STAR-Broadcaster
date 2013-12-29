@@ -8,16 +8,23 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
 import javax.swing.*;
 
+import model.Channel;
 import model.Track;
 
 /**
  * An individual channel widget, displaying a track and the controls
  */
 public class ChannelWidget {
+	
+	private Channel channel;
 	
 	private int channelNum;
 	private JPanel channelPanel;
@@ -29,6 +36,8 @@ public class ChannelWidget {
 	private JButton ejectButton;
 	private JButton backButton;
 	
+	private static final String CHANNEL_EMPTY = "Empty";
+	
 	/**
 	 * Create a new channel widget, adding its components to the initialised panel
 	 * @param channelNum Channel number
@@ -36,6 +45,7 @@ public class ChannelWidget {
 	 */
 	public ChannelWidget(int channelNum, JPanel channelPanel) {
 		
+		this.channel = new Channel();
 		this.channelNum = channelNum;
 		this.channelPanel = channelPanel;
 		
@@ -48,9 +58,19 @@ public class ChannelWidget {
 		
 		channelLabel = new JLabel("Channel " + (channelNum+1));
 		channelPanel.add(channelLabel, vConstraints);
-		channelContents = new JLabel("Empty");
+		channelContents = new JLabel(CHANNEL_EMPTY);
 		channelPanel.add(channelContents, vConstraints);
 		
+		JPanel controls = setupControls();
+		channelPanel.add(controls, vConstraints);
+		
+		// Accept dragged tracks
+		setupDropHandler();
+		
+		updateChannelView();
+	}
+	
+	private JPanel setupControls() {
 		// Place controls horizontally
 		JPanel controls = new JPanel();
 		controls.setLayout(new GridBagLayout());
@@ -60,17 +80,42 @@ public class ChannelWidget {
 		hConstraints.gridy = 1;
 		
 		playButton = new JButton("Play");
+		playButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				channel.play();
+				updateChannelView();
+			}
+		});
 		controls.add(playButton, hConstraints);
 		pauseButton = new JButton("Pause");
+		pauseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				channel.pause();
+				updateChannelView();
+			}
+		});
 		controls.add(pauseButton, hConstraints);
 		ejectButton = new JButton("Eject");
+		ejectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				channel.eject();
+				updateChannelView();
+			}
+		});
 		controls.add(ejectButton, hConstraints);
 		backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				channel.reset();
+				updateChannelView();
+			}
+		});
 		controls.add(backButton, hConstraints);
-		channelPanel.add(controls, vConstraints);
-		
-		// Accept dragged tracks
-		setupDropHandler();
+		return controls;
 	}
 	
 	private void setupDropHandler() {
@@ -83,9 +128,10 @@ public class ChannelWidget {
 					Object obj = dtde.getTransferable().getTransferData(trackDataFlavour);
 					if(obj instanceof Track) {
 						Track track = (Track) obj;
-						System.out.println(track.toString());
-						channelContents.setText(track.getArtist() + " - " + track.getName());
-						System.out.println(trackDataFlavour.isRepresentationClassInputStream());
+						channel.insertTrack(track);
+						updateChannelView();
+						//System.out.println(track.toString());
+						//channelContents.setText(track.getArtist() + " - " + track.getName());
 					} else {
 						System.err.println("Dropped object is not a track");
 					}
@@ -99,6 +145,15 @@ public class ChannelWidget {
 			}
 		};
 		channelPanel.setDropTarget(new DropTarget(channelPanel, dtl));
+	}
+	
+	private void updateChannelView() {
+		Track track = channel.getCurrentTrack();
+		if(track != null) {
+			channelContents.setText(track.getArtist() + " - " + track.getName());
+		} else {
+			channelContents.setText(CHANNEL_EMPTY);
+		}
 	}
 
 }
