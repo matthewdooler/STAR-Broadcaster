@@ -5,11 +5,9 @@ import gui.model.TracksTableModel;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.table.*;
 
 import model.Track;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -39,8 +37,6 @@ public class BaseWindow {
 		
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		//LayoutManager layoutManager = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
-		//contentPane.setLayout(layoutManager);
 		
 		setupBrowser(contentPane);
 		setupPlayoutChannels(contentPane);
@@ -53,11 +49,11 @@ public class BaseWindow {
 			for(int i = 0; i < 3; i++) {
 				Thread.sleep(300);
 				tracksTableModel.addTrack(new Track("Bullet " + i, "The View", new Date(), "Cheeky for a Reason"));
-				Thread.sleep(700);
+				Thread.sleep(100);
 				tracksTableModel.addTrack(new Track("Bubblewrap " + i, "McFly", new Date(), "Room on the 3rd Floor"));
-				Thread.sleep(1000);
+				Thread.sleep(200);
 				tracksTableModel.addTrack(new Track("Long Road to Hell " + i, "Avicii", new Date(), "True"));
-				Thread.sleep(2000);
+				Thread.sleep(100);
 				tracksTableModel.addTrack(new Track("Always " + i, "Blink 182", new Date(), "Greatest Hits"));
 			}
 		} catch (InterruptedException e) {
@@ -88,8 +84,8 @@ public class BaseWindow {
 		tracksTableModel = new TracksTableModel();
 	    JTable table = new JTable(tracksTableModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
-		//table.setLayoutOrientation(JList.VERTICAL);
-		//table.setVisibleRowCount(-1);
+	    table.setDragEnabled(true);
+	    table.setTransferHandler(new TableTrackTransferHandler(table));
 		
 		JScrollPane listScroller = new JScrollPane(table);
 		//listScroller.setPreferredSize(new Dimension(250, 80));

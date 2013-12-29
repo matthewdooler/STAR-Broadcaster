@@ -55,4 +55,13 @@ public class Track {
 		return album;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Track [getName()=" + getName() + ", getArtist()=" + getArtist()
+				+ ", getFormattedDuration()=" + getFormattedDuration()
+				+ ", getAlbum()=" + getAlbum() + "]";
+	}
 }

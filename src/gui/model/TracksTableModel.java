@@ -53,4 +53,8 @@ public class TracksTableModel extends AbstractTableModel {
 		}
 	}
 	
+	public Track getRow(int row) {
+		return tracks.get(row);
+	}
+	
 }
