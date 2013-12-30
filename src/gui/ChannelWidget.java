@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.datatransfer.DataFlavor;
@@ -34,7 +35,17 @@ public class ChannelWidget {
 	private JButton playButton;
 	private JButton pauseButton;
 	private JButton ejectButton;
-	private JButton backButton;
+	private JButton stopButton;
+	
+	private static final String IMG_FILENAME_PLAY = "img/media-play.png";
+	private static final String IMG_FILENAME_PAUSE = "img/media-pause.png";
+	private static final String IMG_FILENAME_EJECT = "img/media-eject.png";
+	private static final String IMG_FILENAME_STOP = "img/media-stop.png";
+	
+	private static final ImageIcon IMG_PLAY = new ImageIcon(IMG_FILENAME_PLAY);
+	private static final ImageIcon IMG_PAUSE = new ImageIcon(IMG_FILENAME_PAUSE);
+	private static final ImageIcon IMG_EJECT = new ImageIcon(IMG_FILENAME_EJECT);
+	private static final ImageIcon IMG_STOP = new ImageIcon(IMG_FILENAME_STOP);
 	
 	private static final String CHANNEL_EMPTY = "Empty";
 	
@@ -79,16 +90,17 @@ public class ChannelWidget {
 		hConstraints.weightx = 1;
 		hConstraints.gridy = 1;
 		
-		playButton = new JButton("Play");
+		playButton = new JButton(IMG_PLAY);
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				channel.play();
+				if(channel.isPlaying()) channel.pause();
+				else channel.play();
 				updateChannelView();
 			}
 		});
 		controls.add(playButton, hConstraints);
-		pauseButton = new JButton("Pause");
+		/*pauseButton = new JButton(IMG_PAUSE);
 		pauseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -96,8 +108,8 @@ public class ChannelWidget {
 				updateChannelView();
 			}
 		});
-		controls.add(pauseButton, hConstraints);
-		ejectButton = new JButton("Eject");
+		controls.add(pauseButton, hConstraints);*/
+		ejectButton = new JButton(IMG_EJECT);
 		ejectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -106,15 +118,15 @@ public class ChannelWidget {
 			}
 		});
 		controls.add(ejectButton, hConstraints);
-		backButton = new JButton("Back");
-		backButton.addActionListener(new ActionListener() {
+		stopButton = new JButton(IMG_STOP);
+		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				channel.reset();
+				channel.stop();
 				updateChannelView();
 			}
 		});
-		controls.add(backButton, hConstraints);
+		controls.add(stopButton, hConstraints);
 		return controls;
 	}
 	
@@ -148,6 +160,14 @@ public class ChannelWidget {
 	}
 	
 	private void updateChannelView() {
+		
+		// Show either play/pause button
+		if(channel.isPlaying()) {
+			playButton.setIcon(IMG_PAUSE);
+		} else {
+			playButton.setIcon(IMG_PLAY);
+		}
+		
 		Track track = channel.getCurrentTrack();
 		if(track != null) {
 			channelContents.setText(track.getArtist() + " - " + track.getName());

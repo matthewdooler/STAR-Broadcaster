@@ -3,6 +3,7 @@ package model;
 public class Channel implements IChannel {
 	
 	private Track track;
+	private boolean playing = false;
 	
 	public Channel() {
 		track = null;
@@ -25,6 +26,9 @@ public class Channel implements IChannel {
 	public void play() {
 		// TODO: start playback
 		System.out.println("Starting playback (TODO)");
+		if(track != null) {
+			playing = true;
+		}
 	}
 	
 	/**
@@ -34,15 +38,17 @@ public class Channel implements IChannel {
 	public void pause() {
 		// TODO: pause playback
 		System.out.println("Pausing playback (TODO)");
+		playing = false;
 	}
 	
 	/**
 	 * Seek to start of track
 	 */
 	@Override
-	public void reset() {
+	public void stop() {
 		// TODO: seek to start of track
-		System.out.println("Resetting playback (TODO)");
+		System.out.println("Stopping playback (TODO)");
+		playing = false;
 	}
 	
 	/**
@@ -51,6 +57,7 @@ public class Channel implements IChannel {
 	@Override
 	public void eject() {
 		// TODO: stop playback if required
+		playing = false;
 		this.track = null;
 	}
 	
@@ -63,4 +70,11 @@ public class Channel implements IChannel {
 		return this.track;
 	}
 	
+	/**
+	 * @return true if a track is currently playing
+	 */
+	@Override
+	public boolean isPlaying() {
+		return playing;
+	}
 }

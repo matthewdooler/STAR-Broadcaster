@@ -21,7 +21,7 @@ public interface IChannel {
 	/**
 	 * Seek to start of track
 	 */
-	public void reset();
+	public void stop();
 	
 	/**
 	 * Eject current track
@@ -33,4 +33,9 @@ public interface IChannel {
 	 * @return Current track
 	 */
 	public Track getCurrentTrack();
+	
+	/**
+	 * @return true if a track is currently playing
+	 */
+	public boolean isPlaying();
 }
