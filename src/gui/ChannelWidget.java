@@ -35,9 +35,8 @@ public class ChannelWidget {
 	private JLabel channelContents;
 	
 	private JButton playButton;
-	private JButton pauseButton;
-	private JButton ejectButton;
 	private JButton stopButton;
+	private JButton ejectButton;
 	
 	private static final String IMG_FILENAME_PLAY = "img/media-play.png";
 	private static final String IMG_FILENAME_PAUSE = "img/media-pause.png";
@@ -100,6 +99,7 @@ public class ChannelWidget {
 		hConstraints.gridy = 1;
 		int buttonPadding = 8;
 		
+		/* Play/pause button */
 		playButton = new JButton(IMG_PLAY);
 		playButton.setPreferredSize(new Dimension(IMG_PLAY.getIconWidth() + buttonPadding, IMG_PLAY.getIconHeight() + buttonPadding));
 		playButton.addActionListener(new ActionListener() {
@@ -111,25 +111,8 @@ public class ChannelWidget {
 			}
 		});
 		controls.add(playButton, hConstraints);
-		/*pauseButton = new JButton(IMG_PAUSE);
-		pauseButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				channel.pause();
-				updateChannelView();
-			}
-		});
-		controls.add(pauseButton, hConstraints);*/
-		ejectButton = new JButton(IMG_EJECT);
-		ejectButton.setPreferredSize(new Dimension(IMG_EJECT.getIconWidth() + buttonPadding, IMG_EJECT.getIconHeight() + buttonPadding));
-		ejectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				channel.eject();
-				updateChannelView();
-			}
-		});
-		controls.add(ejectButton, hConstraints);
+		
+		/* Stop button */
 		stopButton = new JButton(IMG_STOP);
 		stopButton.setPreferredSize(new Dimension(IMG_STOP.getIconWidth() + buttonPadding, IMG_STOP.getIconHeight() + buttonPadding));
 		stopButton.addActionListener(new ActionListener() {
@@ -140,6 +123,18 @@ public class ChannelWidget {
 			}
 		});
 		controls.add(stopButton, hConstraints);
+		
+		/* Eject button */
+		ejectButton = new JButton(IMG_EJECT);
+		ejectButton.setPreferredSize(new Dimension(IMG_EJECT.getIconWidth() + buttonPadding, IMG_EJECT.getIconHeight() + buttonPadding));
+		ejectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				channel.eject();
+				updateChannelView();
+			}
+		});
+		controls.add(ejectButton, hConstraints);
 		return controls;
 	}
 	

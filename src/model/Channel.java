@@ -1,9 +1,18 @@
 package model;
 
+import java.io.*;
+import java.util.concurrent.Semaphore;
+
+import util.PausablePlayer;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
+
 public class Channel implements IChannel {
 	
 	private Track track;
 	private boolean playing = false;
+	private PausablePlayer player;
+	private Semaphore lock = new Semaphore(1);
 	
 	public Channel() {
 		track = null;
@@ -16,7 +25,29 @@ public class Channel implements IChannel {
 	@Override
 	public void insertTrack(Track track) {
 		eject();
+		lock.acquireUninterruptibly();
 		this.track = track;
+		
+		// Load new player into memory without blocking
+        final Runnable r = new Runnable() {
+            public void run() {
+        		String filename = Tracks.SHARED_MEDIA_DIR + getCurrentTrack().getFilename();
+                try {
+                    FileInputStream fis = new FileInputStream(filename);
+                    BufferedInputStream bis = new BufferedInputStream(fis);
+                    player = new PausablePlayer(bis);
+				} catch(FileNotFoundException e) {
+					System.err.println("Could not find audio file at " + filename);
+					e.printStackTrace();
+                } catch(JavaLayerException e) {
+                	System.err.println("Could not initialise audio file at " + filename);
+                	e.printStackTrace();
+				} finally {
+                	lock.release();
+                }
+            }
+        };
+        new Thread(r).start();
 	}
 	
 	/**
@@ -24,11 +55,17 @@ public class Channel implements IChannel {
 	 */
 	@Override
 	public void play() {
-		// TODO: start playback
-		System.out.println("Starting playback (TODO)");
-		if(track != null) {
-			playing = true;
+		lock.acquireUninterruptibly();
+		if(track != null && player != null) {
+			try {
+				// Start/resume playback
+				player.play();
+				playing = true;
+			} catch (JavaLayerException e) {
+				e.printStackTrace();
+			}
 		}
+		lock.release();
 	}
 	
 	/**
@@ -36,9 +73,12 @@ public class Channel implements IChannel {
 	 */
 	@Override
 	public void pause() {
-		// TODO: pause playback
-		System.out.println("Pausing playback (TODO)");
+		lock.acquireUninterruptibly();
+		if(player != null) {
+			player.pause();
+		}
 		playing = false;
+		lock.release();
 	}
 	
 	/**
@@ -46,9 +86,7 @@ public class Channel implements IChannel {
 	 */
 	@Override
 	public void stop() {
-		// TODO: seek to start of track
-		System.out.println("Stopping playback (TODO)");
-		playing = false;
+		insertTrack(track);
 	}
 	
 	/**
@@ -56,9 +94,14 @@ public class Channel implements IChannel {
 	 */
 	@Override
 	public void eject() {
-		// TODO: stop playback if required
+		lock.acquireUninterruptibly();
+		if(player != null) {
+			player.stop();
+		}
+		player = null;
 		playing = false;
-		this.track = null;
+		track = null;
+		lock.release();
 	}
 	
 	/**
@@ -67,7 +110,7 @@ public class Channel implements IChannel {
 	 */
 	@Override
 	public Track getCurrentTrack() {
-		return this.track;
+		return track;
 	}
 	
 	/**

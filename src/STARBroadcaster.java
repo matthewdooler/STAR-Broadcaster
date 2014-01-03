@@ -30,9 +30,24 @@ public class STARBroadcaster {
 		Tracks tracks = new Tracks(repositoryManager, view);
 		
 		/*for(int i = 1; i <= 12; i++) {
-		Mp3File file = new Mp3File("audio/" + i + ".mp3");
-		Track track = new Track(file);
-		System.out.println("Track read");
+			try {
+				String filename = i + ".mp3";
+				Mp3File file = new Mp3File("tmp/" + filename);
+				Track track = new Track(file, filename);
+				System.out.println("Track read");
+				tracks.addTrack(track, file.getFilename());
+				System.out.println("Track imported");
+			} catch (UnsupportedTagException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidDataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}*/
 		
 	}
