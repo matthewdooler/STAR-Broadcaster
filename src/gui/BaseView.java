@@ -3,13 +3,16 @@ package gui;
 import gui.model.TracksTableModel;
 
 import java.awt.*;
+import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.table.*;
+
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 import model.Track;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,30 +20,36 @@ import java.util.ArrayList;
 /**
  * The main window
  */
-public class BaseWindow {
+public class BaseView {
 	
 	private static String WINDOW_TITLE = "STAR Broadcaster";
 	private JFrame frame;
 	private int numChannels = 4;
 	private List<ChannelWidget> channelWidgets = new ArrayList<ChannelWidget>();
+	
+	// Table model for tracks visible in browser
 	private TracksTableModel tracksTableModel;
+	
+	// All tracks
+	private List<Track> tracks;
 	
 	/**
 	 * Setup the window and display it
 	 */
-	public BaseWindow() {
+	public BaseView() {
 		
 		// Initialise window and maximise it
 		if(isMacOSX()) System.setProperty("com.apple.mrj.application.apple.menu.about.name", WINDOW_TITLE);
 		frame = new JFrame(WINDOW_TITLE);
 		frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
+		int minWidth = numChannels * 50 * 3;
+		int minHeight = 600;
+		frame.setMinimumSize(new Dimension(minWidth, minHeight));
 		
 		setupMenuBar();
 		
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		//LayoutManager layoutManager = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
-		//contentPane.setLayout(layoutManager);
 		
 		setupBrowser(contentPane);
 		setupPlayoutChannels(contentPane);
@@ -48,21 +57,7 @@ public class BaseWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
-		
-		try {
-			for(int i = 0; i < 3; i++) {
-				Thread.sleep(300);
-				tracksTableModel.addTrack(new Track("Bullet " + i, "The View", new Date(), "Cheeky for a Reason"));
-				Thread.sleep(700);
-				tracksTableModel.addTrack(new Track("Bubblewrap " + i, "McFly", new Date(), "Room on the 3rd Floor"));
-				Thread.sleep(1000);
-				tracksTableModel.addTrack(new Track("Long Road to Hell " + i, "Avicii", new Date(), "True"));
-				Thread.sleep(2000);
-				tracksTableModel.addTrack(new Track("Always " + i, "Blink 182", new Date(), "Greatest Hits"));
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		// TODO tracksTableModel.addTrack();
 	}
 	
 	/**
@@ -88,13 +83,18 @@ public class BaseWindow {
 		tracksTableModel = new TracksTableModel();
 	    JTable table = new JTable(tracksTableModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
-		//table.setLayoutOrientation(JList.VERTICAL);
-		//table.setVisibleRowCount(-1);
+	    table.setDragEnabled(true);
+	    table.setTransferHandler(new TableTrackTransferHandler(table));
 		
 		JScrollPane listScroller = new JScrollPane(table);
 		//listScroller.setPreferredSize(new Dimension(250, 80));
 		browser.add(listScroller);
 		
+	}
+	
+	public void updateTracks(List<Track> tracks) {
+		this.tracks = tracks;
+		tracksTableModel.updateTracks(tracks); // TODO: this table shouldn't show everything if we do a search util
 	}
 	
 	/**
