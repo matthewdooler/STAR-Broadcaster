@@ -1,6 +1,8 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.datatransfer.DataFlavor;
@@ -60,6 +62,9 @@ public class ChannelWidget {
 		this.channelNum = channelNum;
 		this.channelPanel = channelPanel;
 		
+		//channelPanel.setBorder(BorderFactory.createLineBorder(new Color(120, 120, 120)));
+		channelPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+		
 		// Stack title,waveform,controls vertically
 		channelPanel.setLayout(new GridBagLayout());
 		GridBagConstraints vConstraints = new GridBagConstraints();
@@ -68,7 +73,11 @@ public class ChannelWidget {
 		vConstraints.gridx = 1;
 		
 		channelLabel = new JLabel("Channel " + (channelNum+1));
+		Font font = channelLabel.getFont();
+		Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+		channelLabel.setFont(boldFont);
 		channelPanel.add(channelLabel, vConstraints);
+		
 		channelContents = new JLabel(CHANNEL_EMPTY);
 		channelPanel.add(channelContents, vConstraints);
 		
@@ -89,8 +98,10 @@ public class ChannelWidget {
 		hConstraints.fill = GridBagConstraints.VERTICAL;
 		hConstraints.weightx = 1;
 		hConstraints.gridy = 1;
+		int buttonPadding = 8;
 		
 		playButton = new JButton(IMG_PLAY);
+		playButton.setPreferredSize(new Dimension(IMG_PLAY.getIconWidth() + buttonPadding, IMG_PLAY.getIconHeight() + buttonPadding));
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -110,6 +121,7 @@ public class ChannelWidget {
 		});
 		controls.add(pauseButton, hConstraints);*/
 		ejectButton = new JButton(IMG_EJECT);
+		ejectButton.setPreferredSize(new Dimension(IMG_EJECT.getIconWidth() + buttonPadding, IMG_EJECT.getIconHeight() + buttonPadding));
 		ejectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -119,6 +131,7 @@ public class ChannelWidget {
 		});
 		controls.add(ejectButton, hConstraints);
 		stopButton = new JButton(IMG_STOP);
+		stopButton.setPreferredSize(new Dimension(IMG_STOP.getIconWidth() + buttonPadding, IMG_STOP.getIconHeight() + buttonPadding));
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -170,7 +183,7 @@ public class ChannelWidget {
 		
 		Track track = channel.getCurrentTrack();
 		if(track != null) {
-			channelContents.setText(track.getArtist() + " - " + track.getName());
+			channelContents.setText(track.getArtist() + " - " + track.getTitle());
 		} else {
 			channelContents.setText(CHANNEL_EMPTY);
 		}
