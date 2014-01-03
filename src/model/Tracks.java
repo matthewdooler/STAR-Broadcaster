@@ -4,6 +4,7 @@ import persistence.RepositoryManager;
 import persistence.TrackRepository;
 import gui.BaseView;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -17,6 +18,7 @@ public class Tracks {
 	private BaseView view;
 	private long updateTracksDelay = 10000; // ms
 	private Timer updateTracksTimer;
+	public static final String SHARED_MEDIA_DIR = "shared_media/"; // TODO: put in config file
 	
 	public Tracks(RepositoryManager repositoryManager, BaseView view) {
 		this.repositoryManager = repositoryManager;
@@ -36,15 +38,22 @@ public class Tracks {
         }
     }
 	
-	public void addTrack(Track track) {
-		TrackRepository trackRepository = repositoryManager.getTrackRepository();
-		trackRepository.add(track);
-		getView().updateTracks(getTracks());
+	public void addTrack(Track track, String tmpFilename) {
+		try {
+			// Move file to shared storage
+			File afile = new File(tmpFilename);
+			if(afile.renameTo(new File(SHARED_MEDIA_DIR + track.getFilename()))) {
+				// Save metadata and update display
+				repositoryManager.getTrackRepository().add(track);
+				getView().updateTracks(getTracks());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void removeTrack(Track track) {
-		TrackRepository trackRepository = repositoryManager.getTrackRepository();
-		trackRepository.remove(track);
+		repositoryManager.getTrackRepository().remove(track);
 		getView().updateTracks(getTracks());
 	}
 	

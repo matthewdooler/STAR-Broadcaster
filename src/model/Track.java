@@ -24,7 +24,7 @@ public class Track extends CouchDbDocument {
 	private String id;
     private String revision;
 	
-    // TODO: filename
+    private String filename;
 	private boolean autoDj;
 	
 	/* Non-ID3 track properties */
@@ -82,7 +82,8 @@ public class Track extends CouchDbDocument {
 		
 	}
 	
-	public Track(Mp3File file) {
+	public Track(Mp3File file, String filename) {
+		this.filename = filename;
 		this.autoDj = false;
 		this.frameCount = file.getFrameCount();
 		this.startOffset = file.getStartOffset();
@@ -711,6 +712,20 @@ public class Track extends CouchDbDocument {
 	
 	// TODO: following are extra properties
 	
+
+	/**
+	 * @return the filename
+	 */
+	public String getFilename() {
+		return filename;
+	}
+
+	/**
+	 * @param filename the filename to set
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 
 	/**
 	 * @return true if track can be played by AutoDJ
